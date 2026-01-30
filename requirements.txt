@@ -1,0 +1,44 @@
+# -----------------------------
+# Core Web Framework
+# -----------------------------
+fastapi
+uvicorn[standard]
+
+
+# -----------------------------
+# Database
+# -----------------------------
+sqlalchemy
+psycopg2-binary
+alembic
+
+
+# -----------------------------
+# Data Processing / Scraping
+# -----------------------------
+pandas
+soccerdata
+lxml
+requests
+httpx
+
+
+# -----------------------------
+# Templates & Forms
+# -----------------------------
+jinja2
+python-multipart
+
+
+# -----------------------------
+# Config & Environment
+# -----------------------------
+python-dotenv
+pydantic
+
+
+# -----------------------------
+# Optional but Recommended
+# -----------------------------
+redis
+orjson
