@@ -64,3 +64,5 @@ scout-platform/
 └── README.md
 
 #Serveri Çalıştırmak için : uvicorn app.main:app --reload
+
+#otomatik eposta için https://resend.com/ pip install resend python-dotenv

@@ -42,3 +42,10 @@ pydantic
 # -----------------------------
 redis
 orjson
+
+# -----------------------------
+# Otomatik Eposta İçin
+# -----------------------------
+
+resend
+python-dotenv
