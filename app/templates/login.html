@@ -1,23 +1,134 @@
 {% extends "base.html" %} {% block title %}Login{% endblock %} {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-5">
-
         <div class="card shadow-sm">
             <div class="card-body">
 
                 <h3 class="mb-3 text-center">Giriş Yap</h3>
 
-                <form action="/auth/login" method="post">
-                    <input type="email" name="email" class="form-control mb-3" placeholder="Email adresiniz" required>
+                <!-- EMAIL -->
+                <form id="email-form">
+                    <input type="email" name="email" class="form-control mb-3" placeholder="Email adresin" required>
 
-                    <button class="btn btn-primary w-100">
-                        Giriş Linki Gönder
+                    <button class="btn btn-primary w-100" type="submit">
+                        Kod Gönder
                     </button>
                 </form>
 
+                <!-- OTP -->
+                <form id="otp-form" action="/auth/verify" method="post" class="d-none mt-3">
+                    <input type="hidden" name="email" id="otp-email">
+
+                    <input type="text" name="code" class="form-control text-center mb-2" placeholder="6 haneli kod" maxlength="6" required>
+
+                    <button class="btn btn-success w-100">
+                        Giriş Yap
+                    </button>
+
+                    <p class="text-muted text-center mt-2 small">
+                        Kodun süresi dolmasına: <span id="timer">05:00</span>
+                    </p>
+                </form>
+
+                <p class="text-muted text-center mt-3 small" id="info-text">
+                    Email adresine giriş kodu göndereceğiz
+                </p>
+
+                <p class="text-danger text-center small d-none" id="otp-error">
+                    Kod hatalı, tekrar deneyin
+                </p>
+
             </div>
         </div>
-
     </div>
 </div>
+
+<script>
+    const emailForm = document.getElementById("email-form");
+    const otpForm = document.getElementById("otp-form");
+    const otpEmailInput = document.getElementById("otp-email");
+    const infoText = document.getElementById("info-text");
+    const timerEl = document.getElementById("timer");
+    const otpError = document.getElementById("otp-error");
+    const otpCodeInput = otpForm.querySelector('input[name="code"]');
+
+    let countdownInterval;
+
+    emailForm.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const email = emailForm.email.value;
+        otpEmailInput.value = email;
+
+        infoText.innerText = "Kod gönderiliyor...";
+
+        const response = await fetch("/auth/send", {
+            method: "POST",
+            body: new URLSearchParams({
+                email
+            })
+        });
+
+        if (!response.ok) {
+            infoText.innerText = "Kod gönderilemedi";
+            return;
+        }
+
+        const data = await response.json();
+
+        emailForm.classList.add("d-none");
+        otpForm.classList.remove("d-none");
+
+        infoText.innerText = "Email adresine gönderilen kodu gir";
+
+        startTimer(data.expires_in || 300);
+    });
+
+    function startTimer(seconds) {
+        let remaining = seconds;
+        clearInterval(countdownInterval);
+
+        countdownInterval = setInterval(() => {
+            const min = String(Math.floor(remaining / 60)).padStart(2, "0");
+            const sec = String(remaining % 60).padStart(2, "0");
+
+            timerEl.innerText = `${min}:${sec}`;
+            remaining--;
+
+            if (remaining < 0) {
+                clearInterval(countdownInterval);
+                infoText.innerText = "Kod süresi doldu. Tekrar gönder.";
+            }
+        }, 1000);
+    }
+
+    otpForm.addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        otpError.classList.add("d-none");
+
+        const formData = new FormData(otpForm);
+
+        const response = await fetch("/auth/verify", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            otpError.innerText = data.detail || "Kod hatalı, tekrar deneyin";
+            otpError.classList.remove("d-none");
+
+            otpCodeInput.value = ""; // ✅ input temizlenir
+            otpCodeInput.focus(); // ✅ tekrar yazmaya hazır
+            return;
+        }
+
+        // ✅ BAŞARILI
+        window.location.href = "/";
+    });
+</script>
+
+
 {% endblock %}

@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.routers import pages
 from app.routers import auth
-
+from app.routers import players
 
 app = FastAPI(title="Scout Platform")
 
@@ -19,6 +19,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.include_router(pages.router)
 app.include_router(auth.router)
+app.include_router(players.router)
 
 
 

@@ -1,0 +1,116 @@
+{% extends "base.html" %} {% block title %} {{ player.name }} | Player Detail {% endblock %} {% block content %}
+<div class="container mt-4">
+
+    <!-- ÜST BAŞLIK -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0">{{ player.name }}</h2>
+            <small class="text-muted">
+                {{ player.position }} · {{ player.nationality }}
+            </small>
+        </div>
+
+        {% if user %}
+        <span class="badge bg-success">
+            Logged in as {{ user }}
+        </span> {% endif %}
+    </div>
+
+    <!-- ARAMA -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" action="/players">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="Oyuncu ara (isim, takım, ülke...)">
+                    <button class="btn btn-outline-primary">
+                        Ara
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <!-- SOL: OYUNCU PROFİL -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Player Profile</h5>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Age:</strong> {{ player.age }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Height:</strong> {{ player.height }} cm
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Preferred Foot:</strong> {{ player.foot }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Current Team:</strong> {{ player.team }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>League:</strong> {{ player.league }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAĞ: İSTATİSTİKLER -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Season Statistics</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Season</th>
+                                    <th>Minutes</th>
+                                    <th>Goals</th>
+                                    <th>Assists</th>
+                                    <th>xG</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stat in stats %}
+                                <tr>
+                                    <td>{{ stat.season }}</td>
+                                    <td>{{ stat.minutes }}</td>
+                                    <td>{{ stat.goals }}</td>
+                                    <td>{{ stat.assists }}</td>
+                                    <td>{{ "%.2f"|format(stat.xg) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SCOUT NOTE -->
+            {% if user %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Scout Notes</h5>
+
+                    <form method="post" action="/players/{{ player.id }}/note">
+                        <textarea class="form-control mb-3" name="note" rows="4" placeholder="Bu oyuncu hakkında notlar..."></textarea>
+
+                        <button class="btn btn-primary">
+                            Notu Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

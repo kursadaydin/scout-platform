@@ -20,13 +20,61 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
+
             <a class="navbar-brand" href="/">Scout Platform</a>
 
-            <div class="navbar-nav">
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link" href="/players">Players</a>
-                <a class="nav-link" href="/teams">Teams</a>
-                <a class="nav-link" href="/login">Login</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <!-- Sol menü -->
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/player_detail">Player Detail</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/teams">Teams</a>
+                    </li>
+                </ul>
+
+                <!-- Sağ menü -->
+                <ul class="navbar-nav">
+
+                    {% if user %}
+                    <!-- Kullanıcı dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        {{ user.split("@")[0] }}
+                    </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-item-text text-muted small">
+                                {{ user }}
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="/auth/logout">
+                                Çıkış Yap
+                            </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {% else %}
+                    <!-- Login -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    {% endif %}
+
+                </ul>
             </div>
         </div>
     </nav>
