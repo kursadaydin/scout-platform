@@ -25,7 +25,3 @@ def home(
             "user": user
         }
     )
-@router.get("/player_detail/{player_id}")
-def get_player(player_id: int):
-    return {"player_id": player_id}
-

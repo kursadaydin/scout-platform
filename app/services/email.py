@@ -28,9 +28,16 @@ def send_otp_email(email: str, code: str):
         "to": [email],
         "subject": "Giriş Kodun",
         "html": f"""
-        <h2>Scout Platform</h2>
-        <p>Giriş kodun:</p>
-        <h1 style="letter-spacing:6px">{code}</h1>
-        <p>5 dakika geçerlidir.</p>
+        <div style="font-family:Arial,sans-serif; padding:20px; background:#f4f6f8;">
+            <div style="max-width:400px; margin:auto; background:#fff; padding:24px; border-radius:8px; text-align:center;">
+                <h2 style="color:#111827; margin-bottom:16px;">Scout Platform</h2>
+                <p style="color:#6b7280; margin-bottom:24px;">Giriş yapmak için aşağıdaki kodu kullan:</p>
+                <div style="font-size:32px; font-weight:700; letter-spacing:6px; color:#111827; margin-bottom:24px; border:1px dashed #d1d5db; padding:16px; border-radius:6px;">
+                    {code}
+                </div>
+                <p style="color:#374151; font-size:14px; margin-bottom:12px;">Kod <strong>5 dakika</strong> geçerlidir.</p>
+                <p style="color:#9ca3af; font-size:12px; margin:0;">Eğer bu isteği sen yapmadıysan, bu e-postayı yok sayabilirsin.</p>
+            </div>
+        </div>
         """
     })

@@ -49,3 +49,9 @@ orjson
 
 resend
 python-dotenv
+
+# -----------------------------
+# Bunlae Database için
+# -----------------------------
+
+sqlalchemy psycopg2-binary

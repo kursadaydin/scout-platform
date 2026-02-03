@@ -9,6 +9,13 @@ from app.routers import pages
 from app.routers import auth
 from app.routers import players
 
+from app.core.database import engine
+from app.db.base import Base
+
+
+# Tabloları oluşturur (şimdilik)
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(title="Scout Platform")
 
 # Template klasörü

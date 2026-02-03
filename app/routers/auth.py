@@ -5,6 +5,17 @@ from fastapi import APIRouter, Form
 from fastapi.responses import RedirectResponse, JSONResponse
 from app.services.email import send_otp_email
 
+from fastapi import APIRouter, Form, HTTPException, Depends
+from sqlalchemy.orm import Session
+from datetime import datetime
+from fastapi.responses import JSONResponse
+
+from app.core.database import SessionLocal
+from app.models.user import User
+
+from app.dependencies import get_db
+
+
 router = APIRouter(prefix="/auth", tags=["auth"])
 
 OTP_STORE = {}
@@ -32,14 +43,21 @@ def send_code(email: str = Form(...)):
         "expires": expires
     }
 
-    send_otp_email(email, code)
+    try:
+        send_otp_email(email, code)
+    except Exception as e:
+        print("RESEND ERROR:", e)
 
-    # 🔑 ARTIK REDIRECT YOK
+        # 🔴 500 yerine kontrollü cevap
+        raise HTTPException(
+            status_code=400,
+            detail="Mail gönderilemedi (Resend)"
+        )
+
     return {
         "message": "OTP gönderildi",
         "expires_in": 300
     }
-
 
 # -------------------------
 # OTP DOĞRULA
@@ -47,7 +65,8 @@ def send_code(email: str = Form(...)):
 @router.post("/verify")
 def verify_code(
     email: str = Form(...),
-    code: str = Form(...)
+    code: str = Form(...),
+    db: Session = Depends(get_db)
 ):
     data = OTP_STORE.get(email)
 
@@ -60,8 +79,17 @@ def verify_code(
     if data["code"] != code:
         raise HTTPException(status_code=400, detail="Kod hatalı")
 
-    del OTP_STORE[email]
+   # kullanıcı DB'de yoksa ekleme
+    user = db.query(User).filter(User.email == email).first()
+    if not user:
+        user = User(email=email)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
+    # 🔹 Son login tarihini güncelle
+    user.last_login = datetime.utcnow()
+    db.commit()
     response = JSONResponse({"success": True})
     response.set_cookie(
         key="user",
