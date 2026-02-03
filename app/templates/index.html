@@ -1,4 +1,45 @@
-{% extends "base.html" %} {% block title %}Home - Scout Platform{% endblock %} {% block content %}
-<h1>Scout Platform</h1>
-<p>Oyuncu scouting platformuna hoş geldiniz.</p>
+{% extends "base.html" %} {% block title %}Ana Sayfa{% endblock %} {% block content %}
+<div class="container mt-4">
+
+    <!-- Arama kutucuğu -->
+    <form method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="name" class="form-control" placeholder="Futbolcu ismi" value="{{ request.query_params.get('name', '') }}" required>
+            <button class="btn btn-primary" type="submit">Ara</button>
+        </div>
+    </form>
+
+    {% if players %}
+    <h3>Sonuçlar: {{ players[0].player }}</h3>
+    <div class="accordion" id="playerSeasons">
+        {% for season in players %}
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ loop.index }}">
+                <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="true" aria-controls="collapse{{ loop.index }}">
+                        Sezon {{ season.season }} - {{ season.team }} ({{ season.league }})
+                    </button>
+            </h2>
+            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#playerSeasons">
+                <div class="accordion-body">
+                    <ul>
+                        <li>Matches: {{ season.matches }}</li>
+                        <li>Minutes: {{ season.minutes }}</li>
+                        <li>Goals: {{ season.goals }}</li>
+                        <li>xG: {{ season.xg }}</li>
+                        <li>Assists: {{ season.assists }}</li>
+                        <li>Shots: {{ season.shots }}</li>
+                        <li>Yellow Cards: {{ season.yellow_cards }}</li>
+                        <li>Red Cards: {{ season.red_cards }}</li>
+                        <!-- Dilediğin kadar istatistik ekleyebilirsin -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %} {% if request.query_params.get('name') %}
+    <p>Bu isimde oyuncu bulunamadı.</p>
+    {% endif %} {% endif %}
+
+</div>
 {% endblock %}
