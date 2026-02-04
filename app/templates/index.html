@@ -1,45 +1,33 @@
-{% extends "base.html" %} {% block title %}Ana Sayfa{% endblock %} {% block content %}
-<div class="container mt-4">
+{% extends "base.html" %} {% block title %}Ana Sayfa{% endblock %} {% block content %} {% if players %}
+<h3 class="mb-3">{{ players[0].player }}</h3>
 
-    <!-- Arama kutucuğu -->
-    <form method="get" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="name" class="form-control" placeholder="Futbolcu ismi" value="{{ request.query_params.get('name', '') }}" required>
-            <button class="btn btn-primary" type="submit">Ara</button>
-        </div>
-    </form>
+<div class="accordion" id="playerSeasons">
+    {% for season in players %}
+    <div class="accordion-item">
+        <h2 class="accordion-header" id="heading{{ loop.index }}">
+            <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}">
+                {{ season.season }} – {{ season.team }} ({{ season.league }})
+            </button>
+        </h2>
 
-    {% if players %}
-    <h3>Sonuçlar: {{ players[0].player }}</h3>
-    <div class="accordion" id="playerSeasons">
-        {% for season in players %}
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="heading{{ loop.index }}">
-                <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="true" aria-controls="collapse{{ loop.index }}">
-                        Sezon {{ season.season }} - {{ season.team }} ({{ season.league }})
-                    </button>
-            </h2>
-            <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#playerSeasons">
-                <div class="accordion-body">
-                    <ul>
-                        <li>Matches: {{ season.matches }}</li>
-                        <li>Minutes: {{ season.minutes }}</li>
-                        <li>Goals: {{ season.goals }}</li>
-                        <li>xG: {{ season.xg }}</li>
-                        <li>Assists: {{ season.assists }}</li>
-                        <li>Shots: {{ season.shots }}</li>
-                        <li>Yellow Cards: {{ season.yellow_cards }}</li>
-                        <li>Red Cards: {{ season.red_cards }}</li>
-                        <!-- Dilediğin kadar istatistik ekleyebilirsin -->
-                    </ul>
-                </div>
+        <div id="collapse{{ loop.index }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}">
+            <div class="accordion-body">
+                <ul class="list-unstyled mb-0">
+                    <li><strong>Matches:</strong> {{ season.matches }}</li>
+                    <li><strong>Minutes:</strong> {{ season.minutes }}</li>
+                    <li><strong>Goals:</strong> {{ season.goals }}</li>
+                    <li><strong>xG:</strong> {{ season.xg }}</li>
+                    <li><strong>Assists:</strong> {{ season.assists }}</li>
+                    <li><strong>Shots:</strong> {{ season.shots }}</li>
+                </ul>
             </div>
         </div>
-        {% endfor %}
     </div>
-    {% else %} {% if request.query_params.get('name') %}
-    <p>Bu isimde oyuncu bulunamadı.</p>
-    {% endif %} {% endif %}
-
+    {% endfor %}
 </div>
-{% endblock %}
+
+{% else %}
+<p class="text-muted">
+    Futbolcu aramak için üst menüyü kullan.
+</p>
+{% endif %} {% endblock %}

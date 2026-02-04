@@ -10,16 +10,16 @@ scout-platform/
 │ │ └── database.py
 │ │
 │ ├── db/
-│ │ ├── base.py
-│ │ └──
+│ │ ├── **init**.py
+│ │ └── base.py
 │ │
 │ ├── models/ # SQLAlchemy modelleri
+│ │ ├── **init**.py
+│ │ ├── player_stats.py
 │ │ ├── user.py
-│ │ ├── league.py
-│ │ ├── team.py
-│ │ ├── player.py
-│ │ ├── season.py
-│ │ └── stats.py
+│ │ ├──
+│ │ ├──
+│ │ └──
 │ │
 │ │
 │ ├── routers/ # get - post methodları
@@ -27,7 +27,7 @@ scout-platform/
 │ │ ├── pages.py
 │ │ ├── auth.py
 │ │ ├── players.py
-│ │ └──
+│ │ └── apis.py
 │ │
 │ ├── schemas/ # Pydantic response modelleri
 │ │ ├── player.py

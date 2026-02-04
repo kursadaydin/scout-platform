@@ -118,16 +118,8 @@ def verify_domain(request: Request):
 # -------------------------------------------------
 # BEARER TOKEN (JWT) – TASLAK
 # -------------------------------------------------
-security = HTTPBearer(auto_error=False)
-
 def get_current_user(request: Request):
-    user = request.cookies.get("user")
-
-    if not user:
-        raise HTTPException(status_code=401)
-
-    return user
-
+    return request.session.get("user")  # yoksa None
 
 
     

@@ -1,7 +1,7 @@
 import random
 from datetime import datetime, timedelta
 import secrets
-from fastapi import APIRouter, Form
+from fastapi import APIRouter, Form, Request
 from fastapi.responses import RedirectResponse, JSONResponse
 from app.services.email import send_otp_email
 
@@ -63,7 +63,7 @@ def send_code(email: str = Form(...)):
 # OTP DOĞRULA
 # -------------------------
 @router.post("/verify")
-def verify_code(
+def verify_code( request: Request,
     email: str = Form(...),
     code: str = Form(...),
     db: Session = Depends(get_db)
@@ -78,6 +78,8 @@ def verify_code(
 
     if data["code"] != code:
         raise HTTPException(status_code=400, detail="Kod hatalı")
+    
+    request.session["user"] = email
 
    # kullanıcı DB'de yoksa ekleme
     user = db.query(User).filter(User.email == email).first()

@@ -1,0 +1,44 @@
+/* Genel body ayarları */
+
+body {
+    background-color: #f8f9fa;
+    font-family: "Arial", sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* Orta içerik kutusu */
+
+#main-content {
+    background-color: #ffffff;
+    padding: 20px 30px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Responsive: mobilde ortadaki içerik tam genişlik */
+
+@media (max-width: 768px) {
+    #main-content {
+        margin: 20px;
+        padding: 15px;
+    }
+}
+
+#player-search {
+    width: 220px;
+}
+
+#search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+}
