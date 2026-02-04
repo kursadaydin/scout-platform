@@ -16,6 +16,13 @@ parsed = urlparse(BASE_URL)
 BASE_DOMAIN = parsed.hostname
 
 
+# -------------------------------------------------
+# BEARER TOKEN (JWT) – TASLAK
+# -------------------------------------------------
+def get_current_user(request: Request):
+    return request.session.get("user")  # yoksa None
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -58,22 +65,12 @@ def rate_limit(
     limit: int = 60,
     window_seconds: int = 60
 ):
-    """
-    IP bazlı basit rate limit
-    """
     ip = request.client.host
     now = datetime.utcnow()
 
     data = RATE_LIMIT_STORE.get(ip)
 
-    if not data:
-        RATE_LIMIT_STORE[ip] = {
-            "count": 1,
-            "reset": now + timedelta(seconds=window_seconds)
-        }
-        return
-
-    if now > data["reset"]:
+    if not data or now > data["reset"]:
         RATE_LIMIT_STORE[ip] = {
             "count": 1,
             "reset": now + timedelta(seconds=window_seconds)
@@ -87,12 +84,6 @@ def rate_limit(
             status_code=429,
             detail="Çok fazla istek attınız, yavaşlayın"
         )
-        
-# -------------------------------------------------
-# ENV
-# -------------------------------------------------
-JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_ME")
-JWT_ALGORITHM = "HS256"
 
 
 # =====================================================
@@ -104,7 +95,7 @@ def verify_domain(request: Request):
     origin = request.headers.get("origin")
 
     if not origin:
-        return  # browser olmayan isteklerde boş olabilir
+        return  # curl / server-to-server için izin
 
     origin_host = urlparse(origin).hostname
 
@@ -113,13 +104,16 @@ def verify_domain(request: Request):
             status_code=403,
             detail="Bu domain'den erişime izin yok"
         )
-        
+
+
 
 # -------------------------------------------------
-# BEARER TOKEN (JWT) – TASLAK
+# ENV
 # -------------------------------------------------
-def get_current_user(request: Request):
-    return request.session.get("user")  # yoksa None
+JWT_SECRET = os.getenv("JWT_SECRET", "CHANGE_ME")
+JWT_ALGORITHM = "HS256"
+
+
 
 
     
